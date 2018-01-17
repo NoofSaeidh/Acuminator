@@ -189,9 +189,14 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
+    <Content Include="PX.Analyzers.pkgdef">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <None Include="project.PublicKey" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CodeSnippets\SnippetUtilities.cs" />
     <Compile Include="Coloriser\ClassificationDefinitions.cs" />
     <Compile Include="Coloriser\EditorFormats.cs" />
     <Compile Include="Coloriser\Regex\PXRegexColorizerTagger.cs" />
