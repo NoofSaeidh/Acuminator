@@ -127,5 +127,8 @@ namespace Acuminator.Analyzers
 
         internal static DiagnosticDescriptor PX1053_ConcatenationPriorLocalization { get; } =
             Rule("PX1053", nameof(Resources.PX1053Title).GetLocalized(), Category.Default, DiagnosticSeverity.Error);
+
+        internal static DiagnosticDescriptor PX1056_DacPropertiesShouldBeVirtual { get; } =
+            Rule("PX1056", nameof(Resources.PX1056Title).GetLocalized(), Category.Default, DiagnosticSeverity.Error);
     }
 }

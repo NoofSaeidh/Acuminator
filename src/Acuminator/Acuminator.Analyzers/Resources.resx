@@ -288,4 +288,7 @@
   <data name="PX1053Title" xml:space="preserve">
     <value>Concatenation of strings is not allowed as a parameter for localization methods and PXException constructors. You should avoid string concatenation in these constructions.</value>
   </data>
+  <data name="PX1056Title" xml:space="preserve">
+    <value>DAC properties should be virtual</value>
+  </data>
 </root>

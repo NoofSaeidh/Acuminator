@@ -573,5 +573,14 @@ namespace Acuminator.Analyzers {
                 return ResourceManager.GetString("PX1053Title", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to DAC properties should be virtual.
+        /// </summary>
+        public static string PX1056Title {
+            get {
+                return ResourceManager.GetString("PX1056Title", resourceCulture);
+            }
+        }
     }
 }
