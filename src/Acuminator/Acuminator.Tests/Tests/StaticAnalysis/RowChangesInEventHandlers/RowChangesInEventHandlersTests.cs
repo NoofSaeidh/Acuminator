@@ -70,13 +70,23 @@ namespace Acuminator.Tests.Tests.StaticAnalysis.RowChangesInEventHandlers
 		}
 
 		[Theory]
-		[EmbeddedFileData("AssignmentInExternalMethod.cs")]
-		public Task AssignmentInExternalMethod(string actual)
+		[EmbeddedFileData("PassRowToExternalMethod.cs")]
+		public Task PassRowToExternalMethod(string actual)
 		{
 			return VerifyCSharpDiagnosticAsync(actual,
 				Descriptors.PX1047_RowChangesInEventHandlers.CreateFor(16, 4, EventType.RowSelected),
 				Descriptors.PX1047_RowChangesInEventHandlers.CreateFor(22, 4, EventType.FieldDefaulting),
 				Descriptors.PX1047_RowChangesInEventHandlers.CreateFor(27, 4, EventType.FieldVerifying));
+		}
+
+		[Theory]
+		[EmbeddedFileData("PassEventArgsToExternalMethod.cs")]
+		public Task PassEventArgsToExternalMethod(string actual)
+		{
+			return VerifyCSharpDiagnosticAsync(actual,
+				Descriptors.PX1047_RowChangesInEventHandlers.CreateFor(14, 4, EventType.RowSelected),
+				Descriptors.PX1047_RowChangesInEventHandlers.CreateFor(19, 4, EventType.FieldDefaulting),
+				Descriptors.PX1047_RowChangesInEventHandlers.CreateFor(24, 4, EventType.FieldVerifying));
 		}
 
 		[Theory]
