@@ -102,5 +102,12 @@ namespace Acuminator.Tests.Tests.StaticAnalysis.RowChangesInEventHandlers
 		{
 			return VerifyCSharpDiagnosticAsync(actual);
 		}
+
+		[Theory]
+		[EmbeddedFileData("PassNewObjectToExternalMethod.cs")]
+		public Task PassNewObjectToExternalMethod_ShouldNotShowDiagnostic(string actual)
+		{
+			return VerifyCSharpDiagnosticAsync(actual);
+		}
 	}
 }

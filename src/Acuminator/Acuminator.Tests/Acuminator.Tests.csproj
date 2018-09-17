@@ -204,6 +204,7 @@
     <EmbeddedResource Include="Tests\StaticAnalysis\RowChangesInEventHandlers\Sources\IndirectSetValue.cs" />
     <EmbeddedResource Include="Tests\StaticAnalysis\RowChangesInEventHandlers\Sources\PassRowToExternalMethod.cs" />
     <EmbeddedResource Include="Tests\StaticAnalysis\RowChangesInEventHandlers\Sources\PassEventArgsToExternalMethod.cs" />
+    <EmbeddedResource Include="Tests\StaticAnalysis\RowChangesInEventHandlers\Sources\PassNewObjectToExternalMethod.cs" />
     <Compile Include="Verification\CodeRefactoringVerifier.cs" />
     <Compile Include="Verification\VerificationHelper.cs" />
     <EmbeddedResource Include="Tests\Utilities\NestedInvocationWalker\Sources\StaticMethod.cs" />
