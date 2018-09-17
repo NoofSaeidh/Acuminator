@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
@@ -19,6 +20,7 @@ namespace Acuminator.Analyzers.StaticAnalysis.RowChangesInEventHandlers
 		{
 			private readonly SemanticModel _semanticModel;
 			private readonly PXContext _pxContext;
+			private readonly Func<CSharpSyntaxNode, bool> _predicate;
 			private CancellationToken _cancellationToken;
 			private readonly ImmutableHashSet<ILocalSymbol> _variables;
 
@@ -26,7 +28,7 @@ namespace Acuminator.Analyzers.StaticAnalysis.RowChangesInEventHandlers
 			public ImmutableArray<ILocalSymbol> Result => _result.ToImmutableArray();
 
 			public VariablesWalker(MethodDeclarationSyntax methodSyntax, SemanticModel semanticModel, PXContext pxContext,
-				CancellationToken cancellationToken)
+				Func<CSharpSyntaxNode, bool> predicate, CancellationToken cancellationToken)
 			{
 				methodSyntax.ThrowOnNull(nameof (methodSyntax));
 				semanticModel.ThrowOnNull(nameof (semanticModel));
@@ -34,6 +36,7 @@ namespace Acuminator.Analyzers.StaticAnalysis.RowChangesInEventHandlers
 
 				_semanticModel = semanticModel;
 				_pxContext = pxContext;
+				_predicate = predicate;
 				_cancellationToken = cancellationToken;
 
 				if (methodSyntax.Body != null || methodSyntax.ExpressionBody?.Expression != null)
@@ -61,13 +64,10 @@ namespace Acuminator.Analyzers.StaticAnalysis.RowChangesInEventHandlers
 				{
 					var variableSymbol = _semanticModel.GetSymbolInfo(variableNode).Symbol as ILocalSymbol;
 
-					if (variableSymbol != null && _variables.Contains(variableSymbol))
+					if (variableSymbol != null && _variables.Contains(variableSymbol)
+					    && _predicate(node.Right))
 					{
-						var walker = new EventArgsRowWalker(_semanticModel, _pxContext);
-						node.Right.Accept(walker);
-
-						if (walker.Success)
-							_result.Add(variableSymbol);
+						_result.Add(variableSymbol);
 					}
 				}
 			}
@@ -79,14 +79,8 @@ namespace Acuminator.Analyzers.StaticAnalysis.RowChangesInEventHandlers
 				{
 					var variableSymbol = _semanticModel.GetDeclaredSymbol(variableDeclarator) as ILocalSymbol;
 
-					if (variableSymbol != null)
-					{
-						var walker = new EventArgsRowWalker(_semanticModel, _pxContext);
-						variableDeclarator.Initializer.Value.Accept(walker);
-
-						if (walker.Success)
-							_result.Add(variableSymbol);
-					}
+					if (variableSymbol != null && _predicate(variableDeclarator.Initializer.Value))
+						_result.Add(variableSymbol);
 				}
 			}
 		}

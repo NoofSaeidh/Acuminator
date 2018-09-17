@@ -5,6 +5,7 @@ using Acuminator.Analyzers.StaticAnalysis.EventHandlers;
 using Acuminator.Utilities.Roslyn;
 using Acuminator.Utilities.Roslyn.Syntax;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.FindSymbols;
@@ -39,15 +40,27 @@ namespace Acuminator.Analyzers.StaticAnalysis.RowChangesInEventHandlers
 					
 					// Find all variables that are declared and assigned with e.Row inside the analyzed method
 					var variablesWalker = new VariablesWalker(methodSyntax, semanticModel, pxContext,
+						node => ContainsEventArgsRow(node, semanticModel, pxContext),
 						context.CancellationToken);
 					methodSyntax.Accept(variablesWalker);
 
 					// Perform analysis
-					var diagnosticWalker = new DiagnosticWalker(context, semanticModel, pxContext, variablesWalker.Result, eventType);
+					var diagnosticWalker = new DiagnosticWalker(context, semanticModel, pxContext, variablesWalker.Result,
+						node => ContainsEventArgsRow(node, semanticModel, pxContext), eventType);
 					methodSyntax.Accept(diagnosticWalker);
 				}
 			}
 		}
 
+		private static bool ContainsEventArgsRow(CSharpSyntaxNode node, SemanticModel semanticModel, PXContext pxContext)
+		{
+			if (node == null)
+				return false;
+
+			var walker = new EventArgsRowWalker(semanticModel, pxContext);
+			node.Accept(walker);
+
+			return walker.Success;
+		}
 	}
 }

@@ -26,11 +26,13 @@ namespace Acuminator.Analyzers.StaticAnalysis.RowChangesInEventHandlers
 			private SymbolAnalysisContext _context;
 			private readonly SemanticModel _semanticModel;
 			private readonly PXContext _pxContext;
+			private readonly Func<CSharpSyntaxNode, bool> _predicate;
 			private readonly ImmutableHashSet<ILocalSymbol> _rowVariables;
 			private readonly object[] _messageArgs;
 
 			public DiagnosticWalker(SymbolAnalysisContext context, SemanticModel semanticModel, PXContext pxContext, 
 				ImmutableArray<ILocalSymbol> rowVariables, // variables which were assigned with e.Row
+				Func<CSharpSyntaxNode, bool> predicate,
 				params object[] messageArgs)
 			{
 				pxContext.ThrowOnNull(nameof (pxContext));
@@ -38,6 +40,7 @@ namespace Acuminator.Analyzers.StaticAnalysis.RowChangesInEventHandlers
 				_context = context;
 				_semanticModel = semanticModel;
 				_pxContext = pxContext;
+				_predicate = predicate;
 				_rowVariables = rowVariables.ToImmutableHashSet();
 				_messageArgs = messageArgs;
 			}
@@ -57,10 +60,7 @@ namespace Acuminator.Analyzers.StaticAnalysis.RowChangesInEventHandlers
 
 					if (!found)
 					{
-						var walker = new EventArgsRowWalker(_semanticModel, _pxContext);
-						node.ArgumentList.Accept(walker);
-
-						found = walker.Success;
+						found = _predicate(node.ArgumentList);
 					}
 
 					if (found)
@@ -75,9 +75,7 @@ namespace Acuminator.Analyzers.StaticAnalysis.RowChangesInEventHandlers
 			{
 				if (node.Left != null)
 				{
-					var walker = new EventArgsRowWalker(_semanticModel, _pxContext);
-					node.Left.Accept(walker);
-					bool found = walker.Success;
+					bool found = _predicate(node.Left);
 
 					if (!found)
 					{
