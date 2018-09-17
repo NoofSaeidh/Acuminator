@@ -36,31 +36,12 @@ namespace Acuminator.Analyzers.StaticAnalysis.RowChangesInEventHandlers
 
 				if (methodSyntax != null)
 				{
-					var semanticModel = context.Compilation.GetSemanticModel(methodSyntax.SyntaxTree, true);
-					
-					// Find all variables that are declared and assigned with e.Row inside the analyzed method
-					var variablesWalker = new VariablesWalker(methodSyntax, semanticModel, pxContext,
-						node => ContainsEventArgsRow(node, semanticModel, pxContext),
-						context.CancellationToken);
-					methodSyntax.Accept(variablesWalker);
+					var semanticModel = context.Compilation.GetSemanticModel(methodSyntax.SyntaxTree, true);					
+					var diagnosticWalker = new DiagnosticWalker(context, semanticModel, pxContext, eventType);
 
-					// Perform analysis
-					var diagnosticWalker = new DiagnosticWalker(context, semanticModel, pxContext, variablesWalker.Result,
-						node => ContainsEventArgsRow(node, semanticModel, pxContext), eventType);
 					methodSyntax.Accept(diagnosticWalker);
 				}
 			}
-		}
-
-		private static bool ContainsEventArgsRow(CSharpSyntaxNode node, SemanticModel semanticModel, PXContext pxContext)
-		{
-			if (node == null)
-				return false;
-
-			var walker = new EventArgsRowWalker(semanticModel, pxContext);
-			node.Accept(walker);
-
-			return walker.Success;
 		}
 	}
 }

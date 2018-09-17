@@ -25,7 +25,7 @@ namespace Acuminator.Analyzers.StaticAnalysis.RowChangesInEventHandlers
 			private readonly ImmutableHashSet<ILocalSymbol> _variables;
 
 			private readonly ISet<ILocalSymbol> _result = new HashSet<ILocalSymbol>();
-			public ImmutableArray<ILocalSymbol> Result => _result.ToImmutableArray();
+			public ImmutableHashSet<ILocalSymbol> Result => _result.ToImmutableHashSet();
 
 			public VariablesWalker(MethodDeclarationSyntax methodSyntax, SemanticModel semanticModel, PXContext pxContext,
 				Func<CSharpSyntaxNode, bool> predicate, CancellationToken cancellationToken)

@@ -26,13 +26,10 @@ namespace Acuminator.Analyzers.StaticAnalysis.RowChangesInEventHandlers
 			private readonly SymbolAnalysisContext _context;
 			private readonly SemanticModel _semanticModel;
 			private readonly PXContext _pxContext;
-			private readonly Func<CSharpSyntaxNode, bool> _predicate;
-			private readonly ImmutableHashSet<ILocalSymbol> _rowVariables;
+			private readonly Stack<ImmutableHashSet<ILocalSymbol>> _rowVariables = new Stack<ImmutableHashSet<ILocalSymbol>>();
 			private readonly object[] _messageArgs;
 
 			public DiagnosticWalker(SymbolAnalysisContext context, SemanticModel semanticModel, PXContext pxContext, 
-				ImmutableArray<ILocalSymbol> rowVariables, // variables which were assigned with e.Row
-				Func<CSharpSyntaxNode, bool> predicate,
 				params object[] messageArgs)
 				:base(context.Compilation, context.CancellationToken)
 			{
@@ -41,37 +38,59 @@ namespace Acuminator.Analyzers.StaticAnalysis.RowChangesInEventHandlers
 				_context = context;
 				_semanticModel = semanticModel;
 				_pxContext = pxContext;
-				_predicate = predicate;
-				_rowVariables = rowVariables.ToImmutableHashSet();
 				_messageArgs = messageArgs;
+			}
+
+			public override void VisitMethodDeclaration(MethodDeclarationSyntax node)
+			{
+				var semanticModel = GetSemanticModel(node.SyntaxTree);
+
+				// Find all variables that are declared and assigned with a DAC row from e.Row inside the analyzed method
+				var variablesWalker = new VariablesWalker(node, semanticModel, _pxContext,
+					ContainsEventArgsRow,
+					_context.CancellationToken);
+				node.Accept(variablesWalker);
+
+				_rowVariables.Push(variablesWalker.Result);
+				base.VisitMethodDeclaration(node);
+				_rowVariables.Pop();
 			}
 
 			public override void VisitInvocationExpression(InvocationExpressionSyntax node)
 			{
 				_context.CancellationToken.ThrowIfCancellationRequested();
 
-				var methodSymbol = _semanticModel.GetSymbolInfo(node).Symbol as IMethodSymbol;
-
-				if (methodSymbol != null && IsMethodForbidden(methodSymbol))
+				if (_semanticModel.GetSymbolInfo(node).Symbol is IMethodSymbol methodSymbol)
 				{
-					bool found = node.ArgumentList.Arguments
-						.Where(arg => arg.Expression != null)
-						.Select(arg => _semanticModel.GetSymbolInfo(arg.Expression).Symbol as ILocalSymbol)
-						.Any(variable => variable != null && _rowVariables.Contains(variable));
+					int? argumentNbr = null;
 
-					if (!found)
+					for (var i = 0; i < node.ArgumentList.Arguments.Count; i++)
 					{
-						found = _predicate(node.ArgumentList);
-					}
+						var argumentSyntax = node.ArgumentList.Arguments[i];
 
-					if (found)
-					{
-						ReportDiagnostic(_context.ReportDiagnostic, Descriptors.PX1047_RowChangesInEventHandlers, node, _messageArgs);
+						var rowVariables = _rowVariables.Peek();
+						var walker = new VariableUsageWalker(rowVariables, _semanticModel);
+						argumentSyntax.Accept(walker);
+						
+						if (walker.Success || ContainsEventArgsRow(argumentSyntax))
+						{
+							argumentNbr = i;
+							break;
+						}
 					}
-				}
-				else // TODO: add condition (go to external method only if acceps e.Row as an argument)
-				{
-					base.VisitInvocationExpression(node);
+					
+					if (argumentNbr != null)
+					{
+						if (IsMethodForbidden(methodSymbol))
+						{
+							ReportDiagnostic(_context.ReportDiagnostic, Descriptors.PX1047_RowChangesInEventHandlers, 
+								node, _messageArgs);
+						}
+						else
+						{
+							base.VisitInvocationExpression(node);
+						}
+					}
 				}
 			}
 
@@ -79,11 +98,12 @@ namespace Acuminator.Analyzers.StaticAnalysis.RowChangesInEventHandlers
 			{
 				if (node.Left != null)
 				{
-					bool found = _predicate(node.Left);
+					bool found = ContainsEventArgsRow(node.Left);
 
 					if (!found)
 					{
-						var varWalker = new VariableMemberAccessWalker(_rowVariables, _semanticModel);
+						var rowVariables = _rowVariables.Peek();
+						var varWalker = new VariableMemberAccessWalker(rowVariables, _semanticModel);
 						node.Left.Accept(varWalker);
 						found = varWalker.Success;
 					}
@@ -113,6 +133,17 @@ namespace Acuminator.Analyzers.StaticAnalysis.RowChangesInEventHandlers
 				return symbol.ContainingType?.OriginalDefinition != null
 				       && symbol.ContainingType.OriginalDefinition.InheritsFromOrEquals(_pxContext.PXCacheType)
 				       && MethodNames.Contains(symbol.Name);
+			}
+
+			private bool ContainsEventArgsRow(CSharpSyntaxNode node)
+			{
+				if (node == null)
+					return false;
+
+				var walker = new EventArgsRowWalker(GetSemanticModel(node.SyntaxTree), _pxContext);
+				node.Accept(walker);
+
+				return walker.Success;
 			}
 		}
 
