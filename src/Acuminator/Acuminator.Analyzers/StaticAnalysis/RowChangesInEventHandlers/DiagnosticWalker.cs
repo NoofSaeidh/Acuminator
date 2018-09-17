@@ -14,7 +14,7 @@ namespace Acuminator.Analyzers.StaticAnalysis.RowChangesInEventHandlers
 {
 	public partial class RowChangesInEventHandlersAnalyzer
 	{
-		private class DiagnosticWalker : CSharpSyntaxWalker
+		private class DiagnosticWalker : NestedInvocationWalker
 		{
 			private static readonly ISet<string> MethodNames = new HashSet<string>(StringComparer.Ordinal)
 			{
@@ -23,7 +23,7 @@ namespace Acuminator.Analyzers.StaticAnalysis.RowChangesInEventHandlers
 				"SetDefaultExt",
 			};
 
-			private SymbolAnalysisContext _context;
+			private readonly SymbolAnalysisContext _context;
 			private readonly SemanticModel _semanticModel;
 			private readonly PXContext _pxContext;
 			private readonly Func<CSharpSyntaxNode, bool> _predicate;
@@ -34,6 +34,7 @@ namespace Acuminator.Analyzers.StaticAnalysis.RowChangesInEventHandlers
 				ImmutableArray<ILocalSymbol> rowVariables, // variables which were assigned with e.Row
 				Func<CSharpSyntaxNode, bool> predicate,
 				params object[] messageArgs)
+				:base(context.Compilation, context.CancellationToken)
 			{
 				pxContext.ThrowOnNull(nameof (pxContext));
 
@@ -65,9 +66,12 @@ namespace Acuminator.Analyzers.StaticAnalysis.RowChangesInEventHandlers
 
 					if (found)
 					{
-						_context.ReportDiagnostic(Diagnostic.Create(Descriptors.PX1047_RowChangesInEventHandlers, 
-							node.GetLocation(), _messageArgs));
+						ReportDiagnostic(_context.ReportDiagnostic, Descriptors.PX1047_RowChangesInEventHandlers, node, _messageArgs);
 					}
+				}
+				else // TODO: add condition (go to external method only if acceps e.Row as an argument)
+				{
+					base.VisitInvocationExpression(node);
 				}
 			}
 
@@ -86,10 +90,21 @@ namespace Acuminator.Analyzers.StaticAnalysis.RowChangesInEventHandlers
 					
 					if (found)
 					{
-						_context.ReportDiagnostic(Diagnostic.Create(Descriptors.PX1047_RowChangesInEventHandlers, 
-							node.GetLocation(), _messageArgs));
+						ReportDiagnostic(_context.ReportDiagnostic, Descriptors.PX1047_RowChangesInEventHandlers, node, _messageArgs);
 					}
 				}
+			}
+
+			public override void VisitMemberAccessExpression(MemberAccessExpressionSyntax node)
+			{
+			}
+
+			public override void VisitObjectCreationExpression(ObjectCreationExpressionSyntax node)
+			{
+			}
+
+			public override void VisitConditionalAccessExpression(ConditionalAccessExpressionSyntax node)
+			{
 			}
 
 
