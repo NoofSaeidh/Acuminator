@@ -59,7 +59,7 @@ namespace Acuminator.Analyzers.StaticAnalysis.RowChangesInEventHandlers
 
 				// Find all variables that are declared and assigned with a DAC row from e.Row inside the analyzed method
 				var variablesWalker = new VariablesWalker(node, semanticModel, _pxContext,
-					ContainsRowParameter,
+					n => ContainsRowParameter(n, false),
 					_context.CancellationToken);
 				node.Accept(variablesWalker);
 
@@ -91,7 +91,7 @@ namespace Acuminator.Analyzers.StaticAnalysis.RowChangesInEventHandlers
 					var walker = new VariableUsageWalker(rowVariables, semanticModel);
 					argumentSyntax.Accept(walker);
 						
-					if (walker.Success || ContainsRowParameter(argumentSyntax))
+					if (walker.Success || ContainsRowParameter(argumentSyntax, true))
 					{
 						found = true;
 
@@ -120,7 +120,7 @@ namespace Acuminator.Analyzers.StaticAnalysis.RowChangesInEventHandlers
 			{
 				if (node.Left != null)
 				{
-					bool found = ContainsRowParameter(node.Left);
+					bool found = ContainsRowParameter(node.Left, false);
 
 					if (!found)
 					{
@@ -157,7 +157,7 @@ namespace Acuminator.Analyzers.StaticAnalysis.RowChangesInEventHandlers
 				       && MethodNames.Contains(symbol.Name);
 			}
 
-			private bool ContainsRowParameter(CSharpSyntaxNode node)
+			private bool ContainsRowParameter(CSharpSyntaxNode node, bool checkEventArgsParameter)
 			{
 				if (node == null)
 					return false;
@@ -169,7 +169,8 @@ namespace Acuminator.Analyzers.StaticAnalysis.RowChangesInEventHandlers
 				if (arg.Type?.OriginalDefinition != null 
 				    && _pxContext.Events.EventTypeMap.ContainsKey(arg.Type.OriginalDefinition))
 				{
-					walker = new EventArgsRowUsageWalker(arg, GetSemanticModel(node.SyntaxTree), _pxContext);
+					walker = new EventArgsRowUsageWalker(checkEventArgsParameter ? arg : null, 
+						GetSemanticModel(node.SyntaxTree), _pxContext);
 				}
 				else
 				{

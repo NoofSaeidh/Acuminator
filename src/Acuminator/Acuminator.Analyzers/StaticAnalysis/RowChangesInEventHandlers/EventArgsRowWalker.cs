@@ -1,4 +1,5 @@
-﻿using Acuminator.Utilities.Roslyn;
+﻿using Acuminator.Utilities.Common;
+using Acuminator.Utilities.Roslyn;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -19,6 +20,9 @@ namespace Acuminator.Analyzers.StaticAnalysis.RowChangesInEventHandlers
 			public EventArgsRowUsageWalker(IParameterSymbol parameter, SemanticModel semanticModel, PXContext pxContext)
 				: base(parameter, semanticModel)
 			{
+				semanticModel.ThrowOnNull(nameof(semanticModel));
+				pxContext.ThrowOnNull(nameof(pxContext));
+
 				_pxContext = pxContext;
 			}
 

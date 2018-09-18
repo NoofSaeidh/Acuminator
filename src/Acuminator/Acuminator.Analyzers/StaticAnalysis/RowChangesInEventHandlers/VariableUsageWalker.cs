@@ -35,6 +35,14 @@ namespace Acuminator.Analyzers.StaticAnalysis.RowChangesInEventHandlers
 					Success = true;
 			}
 
+			public override void VisitObjectCreationExpression(ObjectCreationExpressionSyntax node)
+			{
+			}
+
+			public override void VisitAnonymousObjectCreationExpression(AnonymousObjectCreationExpressionSyntax node)
+			{
+			}
+
 			private bool IsVariable(ExpressionSyntax node)
 			{
 				return node != null

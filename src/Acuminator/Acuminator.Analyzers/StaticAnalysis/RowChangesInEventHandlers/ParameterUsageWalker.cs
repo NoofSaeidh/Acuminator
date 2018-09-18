@@ -1,4 +1,5 @@
 ﻿using System.Collections.Immutable;
+using Acuminator.Utilities.Common;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -19,6 +20,8 @@ namespace Acuminator.Analyzers.StaticAnalysis.RowChangesInEventHandlers
 
 			public ParameterUsageWalker(IParameterSymbol parameter, SemanticModel semanticModel)
 			{
+				semanticModel.ThrowOnNull(nameof(semanticModel));
+
 				Parameter = parameter;
 				SemanticModel = semanticModel;
 			}
@@ -31,12 +34,20 @@ namespace Acuminator.Analyzers.StaticAnalysis.RowChangesInEventHandlers
 
 			public override void VisitIdentifierName(IdentifierNameSyntax node)
 			{
-				if (node != null
+				if (Parameter != null && node != null
 					&& SemanticModel.GetSymbolInfo(node).Symbol is IParameterSymbol parameter
 					&& Parameter.Equals(parameter))
 				{
 					Success = true;
 				}
+			}
+
+			public override void VisitObjectCreationExpression(ObjectCreationExpressionSyntax node)
+			{
+			}
+
+			public override void VisitAnonymousObjectCreationExpression(AnonymousObjectCreationExpressionSyntax node)
+			{
 			}
 		}
 
