@@ -151,6 +151,7 @@ namespace Acuminator.Utilities.Common
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static bool IsEmpty<T>(this IEnumerable<T> source)
 		{
+			// ReSharper disable PossibleMultipleEnumeration
 			source.ThrowOnNull(nameof(source));
 
 			switch (source)
@@ -166,6 +167,7 @@ namespace Acuminator.Utilities.Common
 				default:
 					return !source.Any();
 			}
+			// ReSharper restore PossibleMultipleEnumeration
 		}
 
 		[DebuggerStepThrough]

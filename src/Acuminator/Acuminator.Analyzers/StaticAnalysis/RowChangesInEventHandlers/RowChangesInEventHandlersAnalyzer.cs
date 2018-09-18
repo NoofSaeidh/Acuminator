@@ -32,13 +32,10 @@ namespace Acuminator.Analyzers.StaticAnalysis.RowChangesInEventHandlers
 			if (AnalyzedEventTypes.Contains(eventType))
 			{
 				var methodSymbol = (IMethodSymbol) context.Symbol;
-				var methodSyntax = methodSymbol.GetSyntax(context.CancellationToken) as MethodDeclarationSyntax;
 
-				if (methodSyntax != null)
-				{
-					var semanticModel = context.Compilation.GetSemanticModel(methodSyntax.SyntaxTree, true);					
-					var diagnosticWalker = new DiagnosticWalker(context, semanticModel, pxContext, eventType);
-
+				if (methodSymbol.GetSyntax(context.CancellationToken) is MethodDeclarationSyntax methodSyntax)
+				{				
+					var diagnosticWalker = new DiagnosticWalker(context, pxContext, eventType);
 					methodSyntax.Accept(diagnosticWalker);
 				}
 			}

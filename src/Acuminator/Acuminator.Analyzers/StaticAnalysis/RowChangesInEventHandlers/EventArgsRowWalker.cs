@@ -8,20 +8,17 @@ namespace Acuminator.Analyzers.StaticAnalysis.RowChangesInEventHandlers
 	public partial class RowChangesInEventHandlersAnalyzer
 	{
 		/// <summary>
-		/// Searches for <code>e.Row</code> mentions
+		/// Searches for <code>e.Row</code> usages
 		/// </summary>
-		private class EventArgsRowWalker : CSharpSyntaxWalker
+		private class EventArgsRowUsageWalker : ParameterUsageWalker
 		{
 			private static readonly string RowPropertyName = "Row";
-
-			private readonly SemanticModel _semanticModel;
+			
 			private readonly PXContext _pxContext;
 
-			public bool Success { get; private set; }
-
-			public EventArgsRowWalker(SemanticModel semanticModel, PXContext pxContext)
+			public EventArgsRowUsageWalker(IParameterSymbol parameter, SemanticModel semanticModel, PXContext pxContext)
+				: base(parameter, semanticModel)
 			{
-				_semanticModel = semanticModel;
 				_pxContext = pxContext;
 			}
 
@@ -33,9 +30,11 @@ namespace Acuminator.Analyzers.StaticAnalysis.RowChangesInEventHandlers
 
 			public override void VisitIdentifierName(IdentifierNameSyntax node)
 			{
-				if (node.Identifier.Text == RowPropertyName)
+				base.VisitIdentifierName(node);
+
+				if (!Success && node.Identifier.Text == RowPropertyName)
 				{
-					var propertySymbol = _semanticModel.GetSymbolInfo(node).Symbol as IPropertySymbol;
+					var propertySymbol = SemanticModel.GetSymbolInfo(node).Symbol as IPropertySymbol;
 					var containingType = propertySymbol?.ContainingType?.OriginalDefinition;
 
 					if (containingType != null && _pxContext.Events.EventTypeMap.ContainsKey(containingType))

@@ -74,6 +74,7 @@
     <Compile Include="StaticAnalysis\RowChangesInEventHandlers\DiagnosticWalker.cs" />
     <Compile Include="StaticAnalysis\RowChangesInEventHandlers\EventArgsRowWalker.cs" />
     <Compile Include="StaticAnalysis\RowChangesInEventHandlers\RowChangesInEventHandlersAnalyzer.cs" />
+    <Compile Include="StaticAnalysis\RowChangesInEventHandlers\ParameterUsageWalker.cs" />
     <Compile Include="StaticAnalysis\RowChangesInEventHandlers\VariableUsageWalker.cs" />
     <Compile Include="StaticAnalysis\RowChangesInEventHandlers\VariableMemberAccessWalker.cs" />
     <Compile Include="StaticAnalysis\RowChangesInEventHandlers\VariablesWalker.cs" />
