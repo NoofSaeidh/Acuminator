@@ -84,6 +84,11 @@ namespace Acuminator.Tests.Tests.Fixer
 					"PXSelect<SOOrder,Dump<DumpSimple,Dump<DumpSimple,Dump<DumpSimple>>field",
 					"PXSelect<SOOrder,Dump<DumpSimple,Dump<DumpSimple,Dump<DumpSimple>>>>field;",
 				};
+				yield return new object[]
+				{
+					"PXSelect<SOOrder,Dump<DumpSimple,Dump<DumpSimple,Dump<DumpSimple>>>",
+					"PXSelect<SOOrder,Dump<DumpSimple,Dump<DumpSimple,Dump<DumpSimple>>>>",
+				};
 			}
 
 			IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

@@ -42,11 +42,22 @@ namespace Acuminator.Vsix.BqlFixer
 			}
 
 			var resulterGeneric = typeSyntaxes[0].nodes.First() as GenericNameSyntax;
-			var variableName = SyntaxFactory.VariableDeclarator(identifierName.Identifier);
+			VariableDeclaratorSyntax variableName;
+			if (identifierName != null)
+				variableName = SyntaxFactory.VariableDeclarator(identifierName.Identifier);
+			else
+				// when no variable name typed
+				variableName = SyntaxFactory.VariableDeclarator("");
 			var variableDeclaration = SyntaxFactory.VariableDeclaration(resulterGeneric).AddVariables(variableName);
-			var fieldDeclaration = SyntaxFactory.FieldDeclaration(variableDeclaration).WithModifiers(node.Modifiers);
+			SyntaxNode result;
+			// field if has field name
+			if (identifierName != null)
+				result = SyntaxFactory.FieldDeclaration(variableDeclaration).WithModifiers(node.Modifiers);
+			// incomplete member if no
+			else
+				result = SyntaxFactory.IncompleteMember(variableDeclaration.Type).WithModifiers(node.Modifiers);
 
-			return fieldDeclaration;
+			return result;
 		}
 
 		private bool IsClosedNode(GenericNameSyntax node)
@@ -76,13 +87,19 @@ namespace Acuminator.Vsix.BqlFixer
 			var lastNode = args.Last() as GenericNameSyntax;
 			if (lastNode == null || IsClosedNode(lastNode))
 			{
+				// the last generic node
 				IEnumerable<TypeSyntax> newArgs = args;
-				if(lastNode == null && args.Last() is IdentifierNameSyntax identifier)
+				if(lastNode != null)
+				{
+					// last node is closed generic -> no name for field
+					fieldNameUtilizer(null);
+				}
+				else if(args.Last() is IdentifierNameSyntax identifier)
 				{
 					fieldNameUtilizer(identifier);
 					newArgs = args.Take(args.Count - 1).Select(a => a.WithoutTrivia());
 				}
-				
+
 				yield return (newArgs.ToList(), null);
 				yield break;
 			}
