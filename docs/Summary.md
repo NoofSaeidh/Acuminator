@@ -1,7 +1,7 @@
 ## Diagnostics
 
-| Code   | Short Description                                       | Type  | Code Fix  |
-| ------ | ------------------------------------------------------- | ----- | --------- |
+| Code   | Short Description                                       | Type  | Code Fix  | Comment |
+| ------ | ------------------------------------------------------- | ----- | --------- | --------- |
 | [PX1000](diagnostics/PX1000.md) | An invalid signature of the `PXAction` handler is used. | Error | Available |
 | [PX1001](diagnostics/PX1001.md) | A `PXGraph` instance must be created with the `PXGraph.CreateInstance()` factory method. | Error | Available |
 | [PX1002](diagnostics/PX1002.md) | The field must have a type attribute that corresponds to the list attribute. | Error | Available |
@@ -14,27 +14,27 @@
 | [PX1010](diagnostics/PX1010.md) | If a delegate applies paging in an inner select, `StartRow` must be reset. (If `StartRow` is not reset, paging will be applied twice.) | Warning (Level 1: Significant) | Available |
 | [PX1011](diagnostics/PX1011.md) | Because multiple levels of inheritance are not supported for `PXCacheExtension`, the derived type can be marked as sealed. | Warning (Level 3: Informational) | Available |
 | [PX1012](diagnostics/PX1012.md) | `PXAction` is declared on a non-primary view. | Warning (Level 2: Production Quality) | Available |
-| [PX1013](diagnostics/PX1013.md) | The action handler that initiates a background operation or is executed by a background operation must return `IEnumerable`. | Error | Available   | 
+| [PX1013](diagnostics/PX1013.md) | The action handler that initiates a background operation or is executed by a background operation must return `IEnumerable`. | Error | Available   | Provide proper and full description why we can't do it 
 | [PX1014](diagnostics/PX1014.md) | A DAC field must have a nullable type. | Error   | Available |
 | [PX1015](diagnostics/PX1015.md) | For a BQL statement that contains parameters, the number of arguments of a `Select` method is different from the number of parameters. | Warning (Level 1: Significant) | Unavailable |
 | [PX1018](diagnostics/PX1018.md) | The graph with the specified primary view type parameter doesn't contain the primary view of the specified type. | Error | Unavailable |
-| [PX1021](diagnostics/PX1021.md) | The DAC property field has a type that is not compatible with the field attribute assigned to this property. | Error | Available |
-| [PX1023](diagnostics/PX1023.md) | The DAC property is marked with multiple field attributes. | Error | Available |
-| [PX1024](diagnostics/PX1024.md) | The DAC class field must be abstract. | Error | Available |
+| [PX1021](diagnostics/PX1021.md) | The DAC property field has a type that is not compatible with the field attribute assigned to this property. | Error | Available | "Compatible" -> "Match"
+| [PX1023](diagnostics/PX1023.md) | The DAC property is marked with multiple field attributes. | Error | Available | "Field attributes" -> "Type attributes" |
+| [PX1024](diagnostics/PX1024.md) | The DAC class field must be abstract. | Error | Available | Take a look on the examples to decide if we want to keep this code in the product |
 | [PX1026](diagnostics/PX1026.md) | Underscores cannot be used in the names of DACs and DAC fields. | Error | Available |
-| [PX1027](diagnostics/PX1027.md) | The `CompanyMask`, `CompanyID`, and `DeletedDatabaseRecord` fields cannot be declared in DACs. | Error | Available |
-| [PX1028](diagnostics/PX1028.md) | Constructors in DACs are prohibited. | Error | Available |
-| [PX1029](diagnostics/PX1029.md) | `PXGraph` instances cannot be used inside DAC properties. | Error | Unavailable |
+| [PX1027](diagnostics/PX1027.md) | The `CompanyMask`, `CompanyID`, and `DeletedDatabaseRecord` fields cannot be declared in DACs. | Error | Available | "DeletedDatabaseRecord" should be a warning |
+| [PX1028](diagnostics/PX1028.md) | Constructors in DACs are prohibited. | Error | Available | 
+| [PX1029](diagnostics/PX1029.md) | `PXGraph` instances cannot be used inside DAC properties. | Error | Unavailable | Analyze getters and setters with logic in Pure - probably we must force auto getters and setters |
 | [PX1030](diagnostics/PX1030.md) | The `PXDefault` attribute of the field is used incorrectly. | Warning (Level 1: Significant) or Error | Available |
-| [PX1031](diagnostics/PX1031.md) | DACs cannot contain instance methods. | Error | Unavailable |
-| [PX1032](diagnostics/PX1032.md) | DAC properties cannot contain method invocations. | Error | Unavailable |
+| [PX1031](diagnostics/PX1031.md) | DACs cannot contain instance methods. | Error | Unavailable | Needs additional discussion |
+| [PX1032](diagnostics/PX1032.md) | DAC properties cannot contain method invocations. | Error | Unavailable | Needs additional discussion |
 | [PX1040](diagnostics/PX1040.md) | Instance constructors in BLC extensions are strictly prohibited. You should use the `Initialize()` method instead. | Error | Available |
-| [PX1042](diagnostics/PX1042.md) | In a `RowSelecting` handler, BQL statements and other database queries must be executed only inside a separate connection scope. | Error | Available |
-| [PX1043](diagnostics/PX1043.md) | Changes cannot be saved to the database from event handlers. | Error | Unavailable |
+| [PX1042](diagnostics/PX1042.md) | In a `RowSelecting` handler, BQL statements and other database queries must be executed only inside a separate connection scope. | Error | Available | Simplify the example |
+| [PX1043](diagnostics/PX1043.md) | Changes cannot be saved to the database from event handlers. | Error | Unavailable | Add RowPersisted in case when transaction is open |
 | [PX1044](diagnostics/PX1044.md) | Changes to `PXCache` cannot be performed in event handlers. | Error | Unavailable |
-| [PX1045](diagnostics/PX1045.md) | `PXGraph` instances cannot be created in event handlers. | Error | Unavailable |
-| [PX1046](diagnostics/PX1046.md) | Long-running operations cannot be started within event handlers. | Error | Unavailable |
-| [PX1047](diagnostics/PX1047.md) | In the `FieldDefaulting`, `FieldVerifying`, and `RowSelected` event handlers, DAC instances passed to these event handlers cannot be modified. | Error | Unavailable |
+| [PX1045](diagnostics/PX1045.md) | `PXGraph` instances cannot be created in event handlers. | Error | Unavailable | Make a warning (non-ISV only) |
+| [PX1046](diagnostics/PX1046.md) | Long-running operations cannot be started within event handlers. | Error | Unavailable | Look for examples; modify the documentation - recommend using BPM |
+| [PX1047](diagnostics/PX1047.md) | In the `FieldDefaulting`, `FieldVerifying`, and `RowSelected` event handlers, DAC instances passed to these event handlers cannot be modified. | Error | Unavailable | Warning (error for ISV) |
 | [PX1048](diagnostics/PX1048.md) | For the `RowInserting` and `RowSelecting` events, only the DAC instance that is passed in the event arguments can be modified in the event handler. | Error | Unavailable |
 | [PX1049](diagnostics/PX1049.md) | In `RowSelected` event handlers, BQL statements and other database queries should be avoided. | Warning (Level 1: Significant) | Unavailable |
 | [PX1050](diagnostics/PX1050.md) | Hardcoded strings cannot be used as parameters for localization methods and `PXException` constructors. | Error | Unavailable |
