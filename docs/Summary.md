@@ -32,8 +32,8 @@
 | [PX1028](diagnostics/PX1028.md) | Constructors in DACs are prohibited. | Error | Available | 
 | [PX1029](diagnostics/PX1029.md) | `PXGraph` instances cannot be used inside DAC properties. | Error | Unavailable | Analyze getters and setters with logic in Pure - probably we must force auto getters and setters |
 | [PX1030](diagnostics/PX1030.md) | The `PXDefault` attribute of the field is used incorrectly. | Warning (Level 1: Significant) or Error | Available |
-| [PX1031](diagnostics/PX1031.md) | DACs cannot contain instance methods. | Error | Unavailable | Needs additional discussion |
-| [PX1032](diagnostics/PX1032.md) | DAC properties cannot contain method invocations. | Error | Unavailable | Needs additional discussion |
+| [PX1031](diagnostics/PX1031.md) | DACs cannot contain instance methods. | Error | Unavailable |  |
+| [PX1032](diagnostics/PX1032.md) | DAC properties cannot contain method invocations. | Error | Unavailable | |
 | [PX1040](diagnostics/PX1040.md) | Instance constructors in BLC extensions are strictly prohibited. You should use the `Initialize()` method instead. | Error | Available |
 | [PX1042](diagnostics/PX1042.md) | In a `RowSelecting` handler, BQL statements and other database queries must be executed only inside a separate connection scope. | Error | Available | Simplify the example |
 | [PX1043](diagnostics/PX1043.md) | Changes cannot be saved to the database from event handlers. | Error | Unavailable | Add RowPersisted in case when transaction is open |
