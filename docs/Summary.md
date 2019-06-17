@@ -1,6 +1,7 @@
 ## Common items
 - Diagnostic descriptions should be expanded – more explanations on “why is it forbidden”
 - Need an article on using Automapper for conversion between different DAC types (to avoid implicit operator and helper "convert" methods)
+- Add a warning for non-auto setters and getters
 
 
 ## Diagnostics
