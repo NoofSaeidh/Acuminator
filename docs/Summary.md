@@ -43,17 +43,17 @@
 | [PX1053](diagnostics/PX1053.md) | Concatenated strings cannot be used as parameters for localization methods and `PXException` constructors. | Error | Unavailable |
 | [PX1054](diagnostics/PX1054.md) | A `PXGraph` instance cannot start a long-running operation during the `PXGraph` initialization. | Error | Unavailable |
 | [PX1055](diagnostics/PX1055.md) | An invalid primary key of the DAC is used. | Error | Available |
-| [PX1057](diagnostics/PX1057.md) | A `PXGraph` instance cannot be initialized while another `PXGraph` instance is being initialized. | Error | Unavailable |
+| [PX1057](diagnostics/PX1057.md) | A `PXGraph` instance cannot be initialized while another `PXGraph` instance is being initialized. | Error | Unavailable | Warning |
 | [PX1058](diagnostics/PX1058.md) | A `PXGraph` instance cannot save changes to the database during the `PXGraph` initialization. | Error | Unavailable |
 | [PX1059](diagnostics/PX1059.md) | Changes to `PXCache` cannot be performed during the `PXGraph` initialization. | Error | Unavailable |
 | [PX1060](diagnostics/PX1060.md) | DAC fields should be strongly typed to be used in fluent BQL queries. | Message | Available |
 | [PX1061](diagnostics/PX1061.md) | Constants should be strongly typed to be used in fluent BQL queries. | Message | Available |
 | [PX1070](diagnostics/PX1070.md) | The state of fields and actions can be configured only in `RowSelected` event handlers. | Error | Unavailable |
-| [PX1071](diagnostics/PX1071.md) | Actions cannot be executed within event handlers. | Error | Unavailable |
+| [PX1071](diagnostics/PX1071.md) | Actions cannot be executed within event handlers. | Error | Unavailable | Warning |
 | [PX1072](diagnostics/PX1072.md) | BQL queries must be executed within the context of an existing `PXGraph` instance. | Warning (Level 1: Significant) | Available |
-| [PX1073](diagnostics/PX1073.md) | Exceptions cannot be thrown in the `RowPersisted` event handlers. | Error | Unavailable |
+| [PX1073](diagnostics/PX1073.md) | Exceptions cannot be thrown in the `RowPersisted` event handlers. | Error | Unavailable | Warning |
 | [PX1074](diagnostics/PX1074.md) | `PXSetupNotEnteredException` cannot be thrown in any event handlers except for the `RowSelected` event handlers. | Warning (Level 1: Significant) | Unavailable |
-| [PX1075](diagnostics/PX1075.md) | `PXCache.RaiseExceptionHandling` cannot be invoked from the `FieldDefaulting`, `FieldSelecting`, `RowSelecting`, and `RowPersisted` event handlers. | Error | Unavailable |
+| [PX1075](diagnostics/PX1075.md) | `PXCache.RaiseExceptionHandling` cannot be invoked from the `FieldDefaulting`, `FieldSelecting`, `RowSelecting`, and `RowPersisted` event handlers. | Error | Unavailable | FieldSelecting as warning (non-ISV only) |
 | [PX1080](diagnostics/PX1080.md) | Data view delegates should not start long-running operations. | Error | Unavailable |
 | [PX1081](diagnostics/PX1081.md) | Actions cannot be executed during the `PXGraph` initialization. | Error | Unavailable |
 | [PX1082](diagnostics/PX1082.md) | Actions cannot be executed within data view delegates. | Error | Unavailable |
